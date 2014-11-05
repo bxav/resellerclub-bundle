@@ -1,0 +1,35 @@
+parameters:
+    #model
+    bxav_reseller_club.domain_register.class: Bxav\Component\ResellerClub\Model\DomainRegister
+    bxav_reseller_club.customer_manager.class: Bxav\Component\ResellerClub\Model\CustomerManager
+    bxav_reseller_club.client.class: Bxav\Component\ResellerClub\Model\ResellerClubClient
+
+
+    bxav_reseller_club.api_url.param: https://test.httpapi.com/api
+    bxav_reseller_club.user_id.param: user_id
+    bxav_reseller_club.api_key.param: api_key
+    bxav_reseller_club.nameservers.param: namesservers
+
+services:
+
+    bxav_reseller_club.domain_register:
+        class: %bxav_reseller_club.domain_register.class%
+        arguments: [@bxav_reseller_club.client]
+        calls:
+            - [setDefaultNameservers, [%bxav_reseller_club.nameservers.param%]]
+        
+    bxav_reseller_club.customer_manager:
+        class: %bxav_reseller_club.customer_manager.class%
+        arguments: [@bxav_reseller_club.client]
+        
+    bxav_reseller_club.client:
+        class: %bxav_reseller_club.client.class%
+        arguments: 
+          - @bxav_reseller_club.guzzle_client
+          - %bxav_reseller_club.api_url.param%
+          - %bxav_reseller_club.user_id.param%
+          - %bxav_reseller_club.api_key.param%
+
+        
+    bxav_reseller_club.guzzle_client:
+        class: GuzzleHttp\Client
